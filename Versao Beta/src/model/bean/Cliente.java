@@ -1,5 +1,7 @@
 package model.bean;
 
+import java.util.Date;
+
 /**
  *
  * @author Lukas Souza
@@ -11,7 +13,35 @@ public class Cliente {
     private String rg;
     private String cidadeAtual; 
     private String cidadeDestino;
+    private Date data;
+    private int quantidade;
+    private double preco;
+   
 
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public void setPreco(double preco) {
+        this.preco = preco;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+    
     public int getIdCliente() {
         return idCliente;
     }
@@ -58,6 +88,11 @@ public class Cliente {
 
     public void setCidadeDestino(String cidadeDestino) {
         this.cidadeDestino = cidadeDestino;
+    }
+
+    @Override
+    public String toString() {
+        return getNome();
     }
 
 

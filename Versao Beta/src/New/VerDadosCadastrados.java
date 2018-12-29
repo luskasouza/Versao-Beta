@@ -6,11 +6,18 @@
 package New;
 
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import model.bean.Cidade;
 import model.bean.Cliente;
+import model.bean.Passagem;
+import model.dao.CidadeDAO;
 import model.dao.ClienteDAO;
+import model.dao.PassagemDAO;
 
 /**
  *
@@ -50,6 +57,14 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
         jLabelPQtPassagens.setText(qtPassagens);
         this.veioDoMenor = veioDo1;
     }
+      public void enviarDataViagem(Menu veioDo1, String data){
+        jLabelDataViagem.setText(data);
+        this.veioDoMenor = veioDo1;
+    }
+    public void enviarValorDaViagem(Menu veioDol,String preco){
+        jLabelPreco.setText(preco);
+        this.veioDoMenor = veioDol;
+    }
     //OBS - Inteiro 
     /*
     public void enviarQuantidadeDePassagem(Menor veioDo1 ,String quantidadeDePassagem){
@@ -59,9 +74,9 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
     
     public VerDadosCadastrados(){
         initComponents();
+        Conferirdados();
         DefaultTableModel modelo = (DefaultTableModel) jTableTabela.getModel();
         jTableTabela.setRowSorter(new TableRowSorter(modelo));
-        
         readJTable();
     }
     public void readJTable() {
@@ -79,13 +94,43 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
                 cliente.getCpf(),
                 cliente.getRg(),
                 cliente.getCidadeAtual(),
-                cliente.getCidadeDestino()
+                cliente.getCidadeDestino(),
+                cliente.getData(),
+                cliente.getQuantidade(),
+                cliente.getPreco()
             });
-
         }
-
     }
+    public void readJTableDados(String dados){
+        
+        DefaultTableModel modelo = (DefaultTableModel) jTableTabela.getModel();
+        modelo.setNumRows(0);
+        
+        ClienteDAO cdao = new ClienteDAO();
 
+        for (Cliente cliente : cdao.readDados(dados)) {
+
+            modelo.addRow(new Object[]{
+                cliente.getIdCliente(),
+                cliente.getNome(),
+                cliente.getCpf(),
+                cliente.getRg(),
+                cliente.getCidadeAtual(),
+                cliente.getCidadeDestino(),
+                cliente.getData(),
+                cliente.getQuantidade(),
+                cliente.getPreco()
+            });
+        }
+        
+    }
+    //Conferi dados(
+    public void Conferirdados(){
+        ClienteDAO clienteDAO = new ClienteDAO();
+        for(Cliente cliente : clienteDAO.read()){
+            jComboBox.addItem(cliente);
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -112,11 +157,18 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
         jButtonExcluir = new javax.swing.JButton();
         jButtonAtualizar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jLabelValor = new javax.swing.JLabel();
+        jLabelPreco = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabelDataViagem = new javax.swing.JLabel();
+        jTextField1Bucas = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jComboBox = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setText("Dados do Cadastro");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 153));
@@ -178,7 +230,7 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "NOME", "CPF", "RG", "ORIGEM", "DESTINO"
+                "ID", "NOME", "CPF", "RG", "ORIGEM", "DESTINO", "DATA", "QUANTIDADE", "PREÇO"
             }
         ));
         jTableTabela.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -207,16 +259,81 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
         });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Valor:");
+
+        jLabelPreco.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabelPreco.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Data da Viagem:");
+
+        jLabelDataViagem.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabelDataViagem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        jTextField1Bucas.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jTextField1Bucas.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextField1Bucas.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jButton1.setBackground(java.awt.Color.blue);
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jButton1.setText("Buscar");
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jComboBox.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel7.setText("Conferir Dados :");
+        jLabel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jButton2.setBackground(new java.awt.Color(240, 124, 16));
+        jButton2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jButton2.setText("OK");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabelDataViagem, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabelPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(103, 103, 103)
+                                .addComponent(jButtonAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)
+                                .addComponent(jButtonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(35, 35, 35)
+                                .addComponent(BttonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(42, 42, 42)
+                                .addComponent(jButtonExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextField1Bucas, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(24, 24, 24)
+                                .addComponent(jButton1)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
@@ -238,31 +355,25 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
                                 .addComponent(jLabel18)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabelDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(10, 10, 10)
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabelValor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel16)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabelCidadeAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(530, 530, 530)
-                        .addComponent(jLabelCidade, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jButtonAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32)
-                        .addComponent(jButtonConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35)
-                        .addComponent(BttonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(42, 42, 42)
-                        .addComponent(jButtonExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1232, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel16)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabelCidadeAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(530, 530, 530)
+                                .addComponent(jLabelCidade, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addGap(106, 106, 106))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButton2)
+                                        .addContainerGap())))))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -273,18 +384,26 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
                     .addComponent(jLabelNome, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabelCPF, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel15)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabelRg, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(1, 1, 1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelCidadeAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabelCPF, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(13, 13, 13)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel15)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabelRg, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(1, 1, 1)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelCidadeAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -293,21 +412,27 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel5)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabelDataViagem, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabelValor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(1, 1, 1)))
-                .addGap(48, 48, 48)
+                    .addComponent(jLabelPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonAtualizar)
                     .addComponent(BttonCancelar)
                     .addComponent(jButtonConfirm)
-                    .addComponent(jButtonExcluir))
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(131, 131, 131)
+                    .addComponent(jButtonExcluir)
+                    .addComponent(jButton1)
+                    .addComponent(jTextField1Bucas, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(198, 198, 198)
                 .addComponent(jLabelCidade, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -323,16 +448,16 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(417, 417, 417)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(526, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 639, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -346,58 +471,42 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
             veioDoMenor.retornarCidadeAtual(jLabelCidadeAtual.getText());
             veioDoMenor.retornarDestino(jLabelDestino.getText());
             veioDoMenor.retornarQtPassagens(jLabelPQtPassagens.getText());
+            veioDoMenor.retornarDataViagem(jLabelDataViagem.getText());
             this.dispose();
         } 
     }//GEN-LAST:event_BttonCancelarActionPerformed
 
     private void jButtonConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmActionPerformed
+        //Cliente
         Cliente cliente = new Cliente();
         ClienteDAO clientedao =  new ClienteDAO();
-        //Cliente
         cliente.setNome(jLabelNome.getText());
         cliente.setCpf(jLabelCPF.getText());
         cliente.setRg(jLabelRg.getText());
+        
         //Cidade
         cliente.setCidadeAtual(jLabelCidadeAtual.getText());
         cliente.setCidadeDestino(jLabelDestino.getText());
+        
+        //Passagem
+        cliente.setQuantidade(Integer.parseInt(jLabelPQtPassagens.getText()));
+        cliente.setPreco(Double.parseDouble(jLabelPreco.getText()));
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate data = LocalDate.parse(jLabelDataViagem.getText(), formatoData);
+        cliente.setData(new Date(data.getYear(),data.getMonth().getValue(),data.getDayOfMonth()));
         clientedao.create(cliente);
         
         //Limpar campo de texto
-        //Cliente
         jLabelNome.setText("");
         jLabelCPF.setText("");
         jLabelRg.setText("");
-        //Cidade
         jLabelCidadeAtual.setText("");
         jLabelDestino.setText("");
+        jLabelDataViagem.setText("");
+        jLabelPQtPassagens.setText("");
+        jLabelPreco.setText("");
         
         readJTable();
-        
-        /*
-        cliente.setRg(Integer.parseInt(jLabelRg.getText()));
-        cliente.setRg(Double.parseDouble(jLabelRg.getText()));
-        */
-        
-        /*
-        String nome = jLabelNome.getText().trim();
-        String cpf = jLabelCPF.getText().trim();
-        String rg = jLabelRg.getText().trim();
-        String cidadeAtual = jLabelCidadeAtual.getText().trim();
-        String destino = jLabelDestino.getText().trim();
-        String passagem = jLabelPQtPassagens.getText().trim();
-    
-        DefaultTableModel val = (DefaultTableModel)jTableTabela.getModel();
-        val.addRow(new String[]{cpf,nome,rg,cidadeAtual,destino,passagem});
-        
-        jLabelCPF.setText("");
-        jLabelNome.setText("");
-        jLabelRg.setText("");
-        jLabelCidadeAtual.setText("");
-        jLabelDestino.setText("");
-        jLabelPQtPassagens.setText("");
-        
-        jLabelNome.requestFocus();
-        */
     }//GEN-LAST:event_jButtonConfirmActionPerformed
 
     private void jTableTabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableTabelaMouseClicked
@@ -411,36 +520,20 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
             cliente.setIdCliente((int) jTableTabela.getValueAt(jTableTabela.getSelectedRow(), 0));
             clientedao.delete(cliente);
             
-            //Cliente
+            //Limpar campo de texto
             jLabelNome.setText("");
             jLabelCPF.setText("");
             jLabelRg.setText("");
-            //Cidade
             jLabelCidadeAtual.setText("");
             jLabelDestino.setText("");
+            jLabelDataViagem.setText("");
+            jLabelPQtPassagens.setText("");
+            jLabelPreco.setText("");
             readJTable();
 
         } else {
             JOptionPane.showMessageDialog(null, "Selecione um produto para excluir.");
         }
-
-
-
-
-
-
-
-
-//((DefaultTableModel)jTableTabela.getModel()).removeRow(jTableTabela.getSelectedRow());
-       /*
-       DefaultTableModel dtm = (DefaultTableModel)jTableTabela.getModel();
-        if (jTableTabela.getSelectedRow() >= 0){
-            dtm.removeRow(jTableTabela.getSelectedRow());
-            jTableTabela.setModel(dtm);
-        }else{
-            JOptionPane.showMessageDialog(null, "Favor selecionar uma linha");
-        }
-       */
     }//GEN-LAST:event_jButtonExcluirActionPerformed
 
     private void jButtonAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtualizarActionPerformed
@@ -455,20 +548,46 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
             //Cidade
             cliente.setCidadeAtual(jLabelCidadeAtual.getText());
             cliente.setCidadeDestino(jLabelDestino.getText());
+            
+            cliente.setQuantidade(Integer.parseInt(jLabelPQtPassagens.getText()));
+            cliente.setPreco(Double.parseDouble(jLabelPreco.getText()));
+            DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate data = LocalDate.parse(jLabelDataViagem.getText(), formatoData);
+            cliente.setData(new Date(data.getYear(),data.getMonth().getValue(),data.getDayOfMonth()));
             cliente.setIdCliente((int) jTableTabela.getValueAt(jTableTabela.getSelectedRow(), 0));
             clientedao.update(cliente);
 
-            //Cliente
+                //Limpar campo de texto
             jLabelNome.setText("");
             jLabelCPF.setText("");
             jLabelRg.setText("");
-            //Cidade
             jLabelCidadeAtual.setText("");
             jLabelDestino.setText("");
+            jLabelDataViagem.setText("");
+            jLabelPQtPassagens.setText("");
+            jLabelPreco.setText("");
             readJTable();
 
         } 
     }//GEN-LAST:event_jButtonAtualizarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+                  readJTableDados(jTextField1Bucas.getText());
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Cliente cleinte = (Cliente) jComboBox.getSelectedItem();
+        JOptionPane.showMessageDialog(null,
+                "ID: "+cleinte.getIdCliente()+
+                "\nNome: "+cleinte.getNome()+
+                "\nCPF: "+cleinte.getCpf()+
+                "\nRG: "+cleinte.getRg()+
+                "\nORIGEM: "+cleinte.getCidadeAtual()+
+                "\nDESTINO: "+cleinte.getCidadeDestino()+
+                "\nDATA da VIAGEM: "+cleinte.getData()+
+                "\nQUANTIDADE: "+cleinte.getQuantidade()+
+                "\nPREÇO: "+cleinte.getPreco()+" R$");
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -507,9 +626,12 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BttonCancelar;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButtonAtualizar;
     private javax.swing.JButton jButtonConfirm;
     private javax.swing.JButton jButtonExcluir;
+    private javax.swing.JComboBox<Object> jComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -518,17 +640,21 @@ public class VerDadosCadastrados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabelCPF;
     private javax.swing.JLabel jLabelCidade;
     private javax.swing.JLabel jLabelCidadeAtual;
+    private javax.swing.JLabel jLabelDataViagem;
     private javax.swing.JLabel jLabelDestino;
     private javax.swing.JLabel jLabelNome;
     private javax.swing.JLabel jLabelPQtPassagens;
+    private javax.swing.JLabel jLabelPreco;
     private javax.swing.JLabel jLabelRg;
-    private javax.swing.JLabel jLabelValor;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableTabela;
+    private javax.swing.JTextField jTextField1Bucas;
     // End of variables declaration//GEN-END:variables
 
  

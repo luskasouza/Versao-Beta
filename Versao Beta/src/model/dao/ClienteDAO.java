@@ -2,6 +2,7 @@ package model.dao;
 
 import connection.ConnectionFactory;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,12 +23,15 @@ public class ClienteDAO {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         try {
-            stmt = con.prepareStatement("INSERT INTO cliente (nome,cpf,rg,cidadeAtual,cidadeDestino)VALUES(?,?,?,?,?)");
+            stmt = con.prepareStatement("INSERT INTO cliente (nome,cpf,rg,cidadeAtual,cidadeDestino,data,quantidade,preco)VALUES(?,?,?,?,?,?,?,?)");
             stmt.setString(1, cliente.getNome());
             stmt.setString(2, cliente.getCpf());
             stmt.setString(3, cliente.getRg());
             stmt.setString(4, cliente.getCidadeAtual());
             stmt.setString(5, cliente.getCidadeDestino());
+            stmt.setDate(6, (Date) cliente.getData());
+            stmt.setInt(7, cliente.getQuantidade());
+            stmt.setDouble(8, cliente.getPreco());
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
         } catch (SQLException ex) {
@@ -54,6 +58,9 @@ public class ClienteDAO {
                 cliente.setRg(rs.getString("rg"));
                 cliente.setCidadeAtual(rs.getString("cidadeAtual"));
                 cliente.setCidadeDestino(rs.getString("cidadeDestino"));
+                cliente.setData(rs.getDate("data"));
+                cliente.setQuantidade(rs.getInt("quantidade"));
+                cliente.setPreco(rs.getDouble("preco"));
                 clientes.add(cliente);
             }
         } catch (SQLException ex) {
@@ -68,13 +75,16 @@ public class ClienteDAO {
         Connection con = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         try {
-            stmt = con.prepareStatement("UPDATE cliente SET nome = ? ,cpf = ?,rg = ?,cidadeAtual = ? ,cidadeDestino = ? WHERE idCliente = ?");
+            stmt = con.prepareStatement("UPDATE cliente SET nome = ? ,cpf = ?,rg = ?,cidadeAtual = ? ,cidadeDestino = ?, data = ?,quantidade = ?,preco = ? WHERE idCliente = ?");
             stmt.setString(1, cliente.getNome());
             stmt.setString(2, cliente.getCpf());
             stmt.setString(3, cliente.getRg());
             stmt.setString(4, cliente.getCidadeAtual());
             stmt.setString(5, cliente.getCidadeDestino());
-            stmt.setInt(6, cliente.getIdCliente());
+            stmt.setDate(6, (Date) cliente.getData());
+            stmt.setInt(7, cliente.getQuantidade());
+            stmt.setDouble(8, cliente.getPreco());
+            stmt.setInt(9, cliente.getIdCliente());
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
         } catch (SQLException ex) {
@@ -98,5 +108,34 @@ public class ClienteDAO {
         } finally {
             ConnectionFactory.closeConnection(con, stmt);
         }
+    }
+    public List<Cliente> readDados(String dados) {
+        Connection con = ConnectionFactory.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<Cliente> clientes = new ArrayList<>();
+        try {
+            stmt = con.prepareStatement("SELECT * FROM cliente WHERE nome LIKE ?");
+            stmt.setString(1, "%"+dados+"%");
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                Cliente cliente = new Cliente();
+                cliente.setIdCliente(rs.getInt("idCliente"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setRg(rs.getString("rg"));
+                cliente.setCidadeAtual(rs.getString("cidadeAtual"));
+                cliente.setCidadeDestino(rs.getString("cidadeDestino"));
+                cliente.setData(rs.getDate("data"));
+                cliente.setQuantidade(rs.getInt("quantidade"));
+                cliente.setPreco(rs.getDouble("preco"));
+                clientes.add(cliente);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            ConnectionFactory.closeConnection(con, stmt, rs);
+        }
+        return clientes;
     }
 }
