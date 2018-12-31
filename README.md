@@ -1,5 +1,5 @@
 # Versão Beta - Projeto Final
-+ Versão 7.5
++ Versão Beta
 + Banco de Dados 
 + POO
 + Java Swing
